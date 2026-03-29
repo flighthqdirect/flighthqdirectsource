@@ -1,11 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { blogPosts } from "../data/mockData";
 import { Calendar, User, Tag, ArrowLeft, Share2, MessageCircle, Star, ShieldCheck, TrendingDown, CheckCircle, ArrowRight } from "lucide-react";
+import { useNotification } from "../context/NotificationContext";
 
 const BlogPostDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
+  const { notify } = useNotification();
+  const [email, setEmail] = useState("");
   const post = blogPosts.find((p) => p.slug === slug);
+
+  const handleShare = (platform: string) => {
+    notify(`Sharing to ${platform}...`, "info");
+  };
+
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) {
+      notify("Please enter your email address.", "info");
+      return;
+    }
+    notify("Thank you for subscribing to our travel tips!", "success");
+    setEmail("");
+  };
 
   if (!post) {
     return (
@@ -80,7 +97,7 @@ const BlogPostDetail: React.FC = () => {
                       "Book at least 3 weeks in advance for domestic flights.",
                       "Use incognito mode to avoid price hikes based on search history.",
                       "Be flexible with your travel dates and airports.",
-                      "Sign up for price alerts on FLIGHQDIRECT.",
+                      "Sign up for price alerts on FlightHQ Direct.",
                     ].map((item, i) => (
                       <li key={i} className="flex items-start gap-3">
                         <CheckCircle className="w-5 h-5 text-green-500 mt-1 shrink-0" />
@@ -113,17 +130,23 @@ const BlogPostDetail: React.FC = () => {
                 </div>
 
                 <p className="mb-12">
-                  Conclusion: Finding cheap flights is a skill that anyone can master. By following these tips and using FLIGHQDIRECT, you're already ahead of 90% of travelers.
+                  Conclusion: Finding cheap flights is a skill that anyone can master. By following these tips and using FlightHQ Direct, you're already ahead of 90% of travelers.
                 </p>
 
                 <div className="flex items-center justify-between pt-12 border-t border-slate-100">
                   <div className="flex items-center gap-4">
                     <span className="text-sm font-bold text-slate-400 uppercase tracking-widest">Share:</span>
                     <div className="flex gap-3">
-                      <button className="bg-blue-50 p-3 rounded-xl hover:bg-blue-100 transition-colors">
+                      <button 
+                        onClick={() => handleShare("Social Media")}
+                        className="bg-blue-50 p-3 rounded-xl hover:bg-blue-100 transition-colors"
+                      >
                         <Share2 className="w-5 h-5 text-blue-900" />
                       </button>
-                      <button className="bg-blue-50 p-3 rounded-xl hover:bg-blue-100 transition-colors">
+                      <button 
+                        onClick={() => handleShare("Messenger")}
+                        className="bg-blue-50 p-3 rounded-xl hover:bg-blue-100 transition-colors"
+                      >
                         <MessageCircle className="w-5 h-5 text-blue-900" />
                       </button>
                     </div>
@@ -173,14 +196,21 @@ const BlogPostDetail: React.FC = () => {
               <p className="text-slate-500 text-sm mb-8 leading-relaxed">
                 Get exclusive travel deals and tips delivered to your inbox every week.
               </p>
-              <input
-                type="email"
-                placeholder="Your email"
-                className="w-full bg-slate-50 border border-slate-100 px-6 py-4 rounded-2xl mb-4 outline-none focus:border-orange-500 transition-colors"
-              />
-              <button className="w-full bg-blue-900 text-white py-4 rounded-2xl font-black hover:bg-blue-800 transition-all">
-                SUBSCRIBE
-              </button>
+              <form onSubmit={handleSubscribe}>
+                <input
+                  type="email"
+                  placeholder="Your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-100 px-6 py-4 rounded-2xl mb-4 outline-none focus:border-orange-500 transition-colors"
+                />
+                <button 
+                  type="submit"
+                  className="w-full bg-blue-900 text-white py-4 rounded-2xl font-black hover:bg-blue-800 transition-all"
+                >
+                  SUBSCRIBE
+                </button>
+              </form>
             </div>
           </aside>
         </div>

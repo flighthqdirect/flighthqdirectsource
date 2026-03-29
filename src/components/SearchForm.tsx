@@ -1,8 +1,12 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Search, MapPin, Calendar, Users, ArrowRightLeft, Plane, Globe } from "lucide-react";
 import { motion } from "motion/react";
+import { useNotification } from "../context/NotificationContext";
 
 const SearchForm: React.FC = () => {
+  const { notify } = useNotification();
+  const navigate = useNavigate();
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [departureDate, setDepartureDate] = useState("");
@@ -12,9 +16,21 @@ const SearchForm: React.FC = () => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!from.trim() || !to.trim()) {
+      notify("Please enter both origin and destination cities.", "error");
+      return;
+    }
+
+    const blockedKeywords = ["test", "error", "crash", "undefined", "null"];
+    if (blockedKeywords.some(kw => from.toLowerCase().includes(kw) || to.toLowerCase().includes(kw))) {
+      notify("Invalid search query. Please enter real city names or airport codes.", "error");
+      return;
+    }
+
     // In a real app, this would redirect to a search results page or call an affiliate API
     console.log("Searching for flights:", { from, to, departureDate, returnDate, passengers, tripType });
-    alert("Searching for flights! Redirecting to affiliate partner...");
+    notify(`Searching for flights from ${from} to ${to}... We'll show you the best results shortly!`, "success");
   };
 
   return (
@@ -130,7 +146,8 @@ const SearchForm: React.FC = () => {
         <div className="md:col-span-2 lg:col-span-4 mt-4">
           <button
             type="submit"
-            className="w-full bg-orange-500 text-white py-4 rounded-2xl font-black text-xl tracking-tight hover:bg-orange-600 transition-all shadow-xl shadow-orange-500/30 flex items-center justify-center gap-3 group"
+            disabled={!from || !to || !departureDate}
+            className="w-full bg-orange-500 text-white py-4 rounded-2xl font-black text-xl tracking-tight hover:bg-orange-600 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-orange-500 disabled:active:scale-100 transition-all shadow-xl shadow-orange-500/30 flex items-center justify-center gap-3 group"
           >
             <Search className="w-6 h-6 group-hover:scale-110 transition-transform" />
             SEARCH CHEAPEST FLIGHTS NOW

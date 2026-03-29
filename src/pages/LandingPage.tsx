@@ -1,16 +1,27 @@
 import React from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { Plane, Star, ArrowRight, ShieldCheck, Zap, Globe, TrendingUp, CheckCircle, Search } from "lucide-react";
-import SearchForm from "../components/SearchForm";
+import { useNotification } from "../context/NotificationContext";
 
 const LandingPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
+  const { notify } = useNotification();
+  const navigate = useNavigate();
   
+  const handleBookNow = (from: string, to: string) => {
+    notify(`Checking latest prices for ${from} to ${to}...`, "info");
+  };
+
+  const handleSearchAll = () => {
+    notify("Searching all available flights for you...", "info");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   // Mock landing page data based on slug
   const landingData = {
     "cheap-flights-malaysia": {
-      title: "CHEAP FLIGHTS MALAYSIA",
-      sub: "Compare 100+ Airlines in Seconds. Book smarter, save more with FLIGHQDIRECT.",
+      title: "MALAYSIA TRAVEL GUIDE",
+      sub: "Discover the best routes, airline insights, and travel tips for your next trip to Malaysia.",
       heroImg: "https://picsum.photos/seed/malaysia/1920/1080",
       deals: [
         { from: "KL", to: "Singapore", price: "RM 150" },
@@ -19,8 +30,8 @@ const LandingPage: React.FC = () => {
       ]
     },
     "last-minute-flights-asia": {
-      title: "LAST MINUTE FLIGHTS ASIA",
-      sub: "Unbeatable deals for spontaneous travelers. Search now and fly today!",
+      title: "ASIA TRAVEL INSIGHTS",
+      sub: "Comprehensive guides and expert tools for navigating the best travel options across Asia.",
       heroImg: "https://picsum.photos/seed/asia/1920/1080",
       deals: [
         { from: "KL", to: "Tokyo", price: "RM 1,200" },
@@ -29,8 +40,8 @@ const LandingPage: React.FC = () => {
       ]
     }
   }[slug || "cheap-flights-malaysia"] || {
-    title: "CHEAP FLIGHTS MALAYSIA",
-    sub: "Compare 100+ Airlines in Seconds. Book smarter, save more with FLIGHQDIRECT.",
+    title: "MALAYSIA TRAVEL GUIDE",
+    sub: "Discover the best routes, airline insights, and travel tips for your next trip to Malaysia.",
     heroImg: "https://picsum.photos/seed/malaysia/1920/1080",
     deals: [
       { from: "KL", to: "Singapore", price: "RM 150" },
@@ -62,11 +73,6 @@ const LandingPage: React.FC = () => {
           </p>
         </div>
       </section>
-
-      {/* Search Form */}
-      <div className="max-w-7xl mx-auto px-4">
-        <SearchForm />
-      </div>
 
       {/* Trust Elements */}
       <section className="py-16 bg-white border-b border-slate-100">
@@ -118,12 +124,9 @@ const LandingPage: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-8">
                       <div className="text-right">
-                        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1">Starting from</span>
+                        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1">Estimated Price</span>
                         <span className="text-3xl font-black text-orange-500">{deal.price}</span>
                       </div>
-                      <button className="bg-blue-950 text-white px-8 py-4 rounded-2xl font-black hover:bg-blue-900 transition-all shadow-xl shadow-blue-950/20">
-                        BOOK NOW
-                      </button>
                     </div>
                   </div>
                 ))}
@@ -131,11 +134,8 @@ const LandingPage: React.FC = () => {
               <div className="mt-12 text-center">
                 <p className="text-slate-500 text-sm mb-6 flex items-center justify-center gap-2">
                   <CheckCircle className="w-4 h-4 text-green-500" />
-                  Prices updated 5 minutes ago. Only 3 seats left at these prices!
+                  Prices based on recent historical data.
                 </p>
-                <button className="bg-orange-500 text-white px-12 py-5 rounded-3xl font-black text-xl hover:bg-orange-600 transition-all shadow-2xl shadow-orange-500/30 flex items-center gap-3 mx-auto">
-                  <Search className="w-6 h-6" /> SEARCH ALL FLIGHTS
-                </button>
               </div>
             </div>
           </div>

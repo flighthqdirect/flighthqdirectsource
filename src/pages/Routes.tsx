@@ -1,9 +1,17 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { routes } from "../data/mockData";
 import { ArrowRight, Plane, TrendingDown, Clock, ShieldCheck, Search } from "lucide-react";
+import { useNotification } from "../context/NotificationContext";
 
 const Routes: React.FC = () => {
+  const { notify } = useNotification();
+  const navigate = useNavigate();
+
+  const handleSearchFlights = (from: string, to: string) => {
+    notify(`Searching for flights from ${from} to ${to}... This may take a moment.`, "info");
+  };
+
   return (
     <div className="pt-32 pb-20">
       <div className="max-w-7xl mx-auto px-4">
@@ -66,7 +74,10 @@ const Routes: React.FC = () => {
                   <ShieldCheck className="w-5 h-5" />
                   <span>Price Match Guarantee</span>
                 </div>
-                <button className="bg-blue-950 text-white px-10 py-4 rounded-2xl font-black hover:bg-blue-900 transition-all shadow-xl shadow-blue-950/20 flex items-center gap-2">
+                <button 
+                  onClick={() => handleSearchFlights(route.from, route.to)}
+                  className="bg-blue-950 text-white px-10 py-4 rounded-2xl font-black hover:bg-blue-900 transition-all shadow-xl shadow-blue-950/20 flex items-center gap-2"
+                >
                   <Search className="w-5 h-5" /> SEARCH FLIGHTS
                 </button>
               </div>
